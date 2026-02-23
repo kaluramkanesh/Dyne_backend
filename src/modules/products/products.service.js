@@ -2,7 +2,14 @@ const repo = require("./products.repository");
 
 exports.createProduct = repo.createProduct;
 
-exports.getProducts = repo.getAllProducts;
+exports.getProducts = async (query) => {
+
+    const page = Number(query.page) || 1;
+    const limit = Number(query.limit) || 10;
+
+    return await repo.getAllProducts(page, limit);
+};
+
 
 exports.getProduct = repo.getProductById;
 

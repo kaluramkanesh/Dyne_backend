@@ -15,7 +15,8 @@ exports.create = asyncHandler(async (req, res) => {
 // GET ALL
 exports.getAll = asyncHandler(async (req, res) => {
 
-    const products = await service.getProducts();
+    const products = await service.getProducts(req.query);
+
 
     res.json({ success: true, data: products });
 

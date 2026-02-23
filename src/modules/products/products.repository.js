@@ -64,12 +64,43 @@ exports.createProduct = async (data, client) => {
 
 
 
-exports.getAllProducts = async () => {
+// exports.getAllProducts = async () => {
 
-    const result = await pool.query(`SELECT * FROM products ORDER BY id DESC`);
+//     const result = await pool.query(`SELECT * FROM products ORDER BY id DESC`);
 
-    return result.rows;
+//     return result.rows;
+// };
+
+exports.getAllProducts = async (page = 1, limit = 10) => {
+
+    const offset = (page - 1) * limit;
+
+    // get paginated data
+    const dataQuery = await pool.query(
+        `SELECT * FROM products
+         ORDER BY id DESC
+         LIMIT $1 OFFSET $2`,
+        [limit, offset]
+    );
+
+    // total count for pagination meta
+    const countQuery = await pool.query(
+        `SELECT COUNT(*) FROM products`
+    );
+
+    const total = Number(countQuery.rows[0].count);
+
+    return {
+        data: dataQuery.rows,
+        pagination: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit)
+        }
+    };
 };
+
 
 
 exports.getProductById = async (id) => {
